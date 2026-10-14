@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Profile Setup - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="card wide">
+  <h2>Set up your profile</h2>
+  <form method="POST">
+
+    <label>Your native language</label>
+    <select name="native_language" required>
+      <option value="" disabled {% if not profile %}selected{% endif %}>Choose...</option>
+      {% for l in languages %}
+        <option value="{{ l }}" {% if profile and profile.native_language == l %}selected{% endif %}>{{ l }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Your current English level</label>
+    <select name="english_level" required>
+      <option value="" disabled {% if not profile %}selected{% endif %}>Choose...</option>
+      {% for l in levels %}
+        <option value="{{ l }}" {% if profile and profile.english_level == l %}selected{% endif %}>{{ l }}</option>
+      {% endfor %}
+    </select>
+
+    <label>What is your goal?</label>
+    <select name="learning_goal" required>
+      <option value="" disabled {% if not profile %}selected{% endif %}>Choose...</option>
+      {% for g in goals %}
+        <option value="{{ g }}" {% if profile and profile.learning_goal == g %}selected{% endif %}>{{ g }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Choose your trainer</label>
+    <div class="trainers">
+      {% for t in trainers %}
+      <label class="trainer">
+        <input type="radio" name="trainer" value="{{ t.id }}" required
+               {% if profile and profile.trainer == t.id %}checked{% endif %}>
+        <div class="trainer-card">
+          <div class="trainer-icon">{{ t.icon }}</div>
+          <strong>{{ t.name }}</strong>
+          <small>{{ t.desc }}</small>
+        </div>
+      </label>
+      {% endfor %}
+    </div>
+
+    <button type="submit" class="btn">Save and continue</button>
+  </form>
+</div>
+{% endblock %}

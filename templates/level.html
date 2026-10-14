@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Level {{ level.number }} - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <p class="back"><a href="{{ url_for('dashboard') }}">← Back to dashboard</a></p>
+
+  <div class="panel">
+    <div class="level-header">
+      <div class="trainer-icon big">{{ icon }}</div>
+      <div>
+        <h2>Level {{ level.number }} · {{ level.name }}
+          {% if status == 'completed' %}<span class="badge">Completed ✔</span>{% endif %}
+        </h2>
+        <p>{{ level.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-title">Choose a scenario</h3>
+
+  <div class="levels">
+    {% for s in level.scenarios %}
+      <a class="level-card unlocked" href="{{ url_for('scenario_start', scenario_id=s.scenario_id) }}">
+        <div class="level-icon">{{ trainer.icon }}</div>
+        <div>
+          <div class="level-title">{{ s.title }}</div>
+          <div class="level-desc">{{ s.description }}</div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+  {% if config.DEBUG and status != 'completed' %}
+  <form method="POST" action="{{ url_for('dev_complete_level', level_id=level.level_id) }}" class="dev-box">
+    <small>Testing only (hidden when debug is off):</small>
+    <button type="submit" class="btn btn-small btn-grey">Mark Level {{ level.number }} complete</button>
+  </form>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}My Mistakes - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <p class="back"><a href="{{ url_for('dashboard') }}">← Back to dashboard</a></p>
+
+  <div class="panel">
+    <h2>My Mistakes</h2>
+    <p>Every mistake your trainer found is saved here, so you can see what to practice.</p>
+
+    {% if total == 0 %}
+      <p class="small">No mistakes saved yet. Start a practice session and they will appear here.</p>
+    {% else %}
+      <div class="stats">
+        <div class="stat"><div class="stat-num">{{ total }}</div><div>mistakes found</div></div>
+        <div class="stat"><div class="stat-num">{{ fixed }}</div><div>fixed after retry</div></div>
+        <div class="stat"><div class="stat-num">{{ categories[0].label }}</div><div>most common</div></div>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if total > 0 %}
+  <h3 class="section-title">By category</h3>
+  <div class="panel cat-panel">
+    {% for c in categories %}
+      <div class="cat-row">
+        <div class="cat-name">{{ c.label }}</div>
+        <div class="cat-bar"><div class="cat-fill" style="width: {{ c.pct }}%"></div></div>
+        <div class="cat-count">{{ c.count }} ({{ c.fixed }} fixed)</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <h3 class="section-title">Recent mistakes</h3>
+  <div class="levels">
+    {% for m in items %}
+      <div class="mistake-card {{ m.status }}">
+        <div class="mistake-top">
+          <span class="chip">{{ labels.get(m.category, m.category) }}</span>
+          {% if m.status == 'fixed' %}<span class="badge">Fixed ✔</span>
+          {% elif m.status == 'pending' %}<span class="chip warn">In progress</span>
+          {% else %}<span class="chip warn">Needs practice</span>{% endif %}
+        </div>
+        <div class="fb-row"><span class="fb-label">You said:</span> {{ m.learner_text }}</div>
+        <div class="fb-row"><span class="fb-label">Better:</span> <strong>{{ m.corrected_text }}</strong></div>
+        {% if m.explanation_english %}<div class="fb-row"><span class="fb-label">Why:</span> {{ m.explanation_english }}</div>{% endif %}
+        {% if m.explanation_native %}<div class="fb-row"><span class="fb-label">In {{ language }}:</span> {{ m.explanation_native }}</div>{% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

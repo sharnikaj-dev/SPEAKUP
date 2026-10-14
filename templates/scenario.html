@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ scenario.title }} - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <p class="back">
+    <a href="{{ url_for('level_detail', level_id=scenario.level.level_id) }}">← Back to Level {{ scenario.level.number }}</a>
+  </p>
+
+  <div class="panel">
+    <h2>{{ scenario.title }}</h2>
+    <p>{{ scenario.description }}</p>
+
+    <div class="chat-preview">
+      <div class="trainer-icon">{{ trainer.icon }}</div>
+      <div class="bubble"><strong>{{ trainer.name }}:</strong> {{ scenario.opening_line }}</div>
+    </div>
+
+    <form method="POST" action="{{ url_for('start_session', scenario_id=scenario.scenario_id) }}">
+      <button type="submit" class="btn start-btn">Start practice</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

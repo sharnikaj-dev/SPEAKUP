@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="panel hero-panel">
+    <div class="trainer-icon big">{{ trainer.icon }}</div>
+    <h2>Hi {{ current_user.name }}, I'm {{ trainer.name }}!</h2>
+    <p>I'll be your English trainer. Your level is <strong>{{ profile.english_level }}</strong>
+       and your goal is <strong>{{ profile.learning_goal }}</strong>.</p>
+    <p class="small">Native language: {{ profile.native_language }} ·
+       <a href="{{ url_for('profile_setup') }}">Change profile</a></p>
+  </div>
+
+  <h3 class="section-title">Your learning path</h3>
+
+  <div class="levels">
+    {% for item in levels_view %}
+      {% set lv = item.level %}
+      {% if item.status == 'locked' %}
+        <a class="level-card locked" href="{{ url_for('level_detail', level_id=lv.level_id) }}">
+          <div class="level-icon">🔒</div>
+          <div>
+            <div class="level-title">Level {{ lv.number }} · {{ lv.name }}</div>
+            <div class="level-desc">Complete Level {{ lv.number - 1 }} to unlock</div>
+          </div>
+        </a>
+      {% else %}
+        <a class="level-card {{ item.status }}" href="{{ url_for('level_detail', level_id=lv.level_id) }}">
+          <div class="level-icon">{{ item.icon }}</div>
+          <div>
+            <div class="level-title">Level {{ lv.number }} · {{ lv.name }}
+              {% if item.status == 'completed' %}<span class="badge">Completed ✔</span>{% endif %}
+            </div>
+            <div class="level-desc">{{ lv.description }}</div>
+          </div>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if config.DEBUG %}
+  <form method="POST" action="{{ url_for('dev_reset_progress') }}" class="dev-box">
+    <small>Testing only (hidden when debug is off):</small>
+    <button type="submit" class="btn btn-small btn-grey">Reset my progress</button>
+  </form>
+  {% endif %}
+
+</div>
+{% endblock %}

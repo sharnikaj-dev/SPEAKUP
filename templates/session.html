@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}{{ scenario.title }} - Practice - SPEAKUP{% endblock %}
+
+{% block content %}
+
+{% macro feedback_card(fb, language) %}
+  {% if fb %}
+    {% if fb.has_mistake %}
+      <div class="feedback">
+        <div class="fb-title">💡 Suggestion</div>
+        {% if fb.original %}<div class="fb-row"><span class="fb-label">You said:</span> {{ fb.original }}</div>{% endif %}
+        <div class="fb-row"><span class="fb-label">Try:</span> <strong>{{ fb.corrected }}</strong>
+          <button type="button" class="speak-btn" data-speak="{{ fb.corrected }}" title="Listen" aria-label="Listen">🔊</button>
+        </div>
+        {% if fb.explanation_english %}<div class="fb-row"><span class="fb-label">Why:</span> {{ fb.explanation_english }}</div>{% endif %}
+        {% if fb.explanation_native %}<div class="fb-row"><span class="fb-label">In {{ language }}:</span> {{ fb.explanation_native }}</div>{% endif %}
+      </div>
+    {% elif fb.better_version %}
+      <div class="feedback tip">
+        <div class="fb-title">✨ Nice! A more natural way to say it:</div>
+        <div class="fb-row"><strong>{{ fb.better_version }}</strong>
+          <button type="button" class="speak-btn" data-speak="{{ fb.better_version }}" title="Listen" aria-label="Listen">🔊</button>
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endmacro %}
+
+<div class="container chat-page">
+
+  <p class="back">
+    <a href="{{ url_for('level_detail', level_id=scenario.level.level_id) }}">← Back to Level {{ scenario.level.number }}</a>
+  </p>
+
+  <div class="panel chat-panel">
+    <div class="chat-head">
+      <div class="trainer-icon">{{ trainer.icon }}</div>
+      <div>
+        <strong>{{ scenario.title }}</strong><br>
+        <small>with {{ trainer.name }}</small>
+      </div>
+      <label class="voice-toggle" title="Trainer reads each reply aloud">
+        <input type="checkbox" id="voice-toggle" checked> 🔊 Trainer voice
+      </label>
+    </div>
+
+    <p class="voice-hint">Tap 🔊 next to a message to hear {{ trainer.name }} say it.</p>
+
+    {% if demo %}
+    <div class="demo-banner">
+      Demo mode: no AI key is set, so replies are simple placeholders.
+      Add <code>ANTHROPIC_API_KEY</code> to your <code>.env</code> file for real feedback.
+    </div>
+    {% endif %}
+
+    <div id="chat"
+         data-post-url="{{ url_for('send_message', session_id=ps.session_id) }}"
+         data-language="{{ native_language }}"
+         data-trainer="{{ trainer.id }}"
+         data-skip-url="{{ url_for('skip_retry', session_id=ps.session_id) }}"
+         data-retry-target="{{ pending.corrected_text if pending else '' }}"
+         data-active="{{ 'yes' if ps.status == 'active' else 'no' }}">
+
+      <div id="messages" class="messages">
+        {% for m in messages %}
+          {% if m.sender == 'trainer' %}
+            <div class="msg trainer">
+              <div class="trainer-icon small-icon">{{ trainer.icon }}</div>
+              <div class="bubble">{{ m.text }}</div>
+              <button type="button" class="speak-btn" data-speak="{{ m.text }}" title="Listen" aria-label="Listen">🔊</button>
+            </div>
+          {% else %}
+            <div class="msg user"><div class="bubble user-bubble">{{ m.text }}</div></div>
+            {% if m.feedback and m.feedback.retry %}
+              <div class="retry-note {{ 'ok' if m.feedback.passed else 'miss' }}">{{ m.feedback.note }}</div>
+            {% else %}
+              {{ feedback_card(m.feedback, native_language) }}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div id="typing" class="typing" hidden>{{ trainer.name }} is typing...</div>
+      <div id="error" class="chat-error" hidden></div>
+
+      {% if ps.status == 'active' %}
+      <div id="retry-bar" class="retry-bar" {% if not pending %}hidden{% endif %}>
+        <div class="retry-title">🔁 Your turn: say it correctly</div>
+        <div class="retry-row">
+          <strong id="retry-target">{{ pending.corrected_text if pending else '' }}</strong>
+          <button type="button" class="speak-btn" id="retry-speak" title="Listen" aria-label="Listen"
+                  data-speak="{{ pending.corrected_text if pending else '' }}">🔊</button>
+          <button type="button" id="skip-btn" class="btn btn-small btn-grey">Skip</button>
+        </div>
+      </div>
+
+      <form id="chat-form" class="chat-form" autocomplete="off">
+        <textarea id="chat-input" rows="2" maxlength="{{ max_chars }}"
+                  placeholder="Type your reply in English... (Enter to send)"></textarea>
+        <button type="submit" id="send-btn" class="btn">Send</button>
+      </form>
+
+      <form method="POST" action="{{ url_for('end_session', session_id=ps.session_id) }}" class="end-form">
+        <button type="submit" class="btn btn-small btn-grey">End session</button>
+      </form>
+      {% else %}
+        <p class="small">This session has ended.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+{% endblock %}
