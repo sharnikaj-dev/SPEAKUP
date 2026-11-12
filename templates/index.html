@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}SPEAKUP - Practice English Conversation with Confidence{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-badge">🎓 AI-Powered Conversational English Learning</div>
+    <h1 class="hero-title">Practice Real English.<br><span class="text-teal">Speak with Confidence.</span></h1>
+    <p class="hero-subtitle">
+        SPEAKUP is an interactive practice platform that pairs you with an adaptive AI conversation partner.
+        Converse through realistic scenarios, receive instant grammar corrections with explanations in your native language,
+        and level up your fluency step-by-step.
+    </p>
+
+    <div class="hero-actions">
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg">Go to My Dashboard &rarr;</a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">Create Free Account</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-lg">Log In</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="features-grid">
+    <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-heading">Personalized Learning</h3>
+        <p class="feature-desc">
+            Set your native language, current background, and speaking goals. Experience practice tailored directly to your needs.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">🎭</div>
+        <h3 class="feature-heading">Scenario-Based Practice</h3>
+        <p class="feature-desc">
+            Practice ordering at a cafe, job interviews, meeting new colleagues, and daily interactions at your assigned level.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">💡</div>
+        <h3 class="feature-heading">Instant Smart Feedback</h3>
+        <p class="feature-desc">
+            Get sentence-by-sentence corrections, simple explanations, and native-language hints for every error you make.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3 class="feature-heading">Progress & Mistake Tracking</h3>
+        <p class="feature-desc">
+            All mistakes and milestones are tracked. Review past grammar slips, retry scenarios, and unlock the next difficulty tier.
+        </p>
+    </div>
+</section>
+{% endblock %}

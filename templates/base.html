@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SPEAKUP - Conversational English Practice{% endblock %}</title>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Google Fonts for crisp modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('main.index') }}" class="brand-logo">
+                <span class="brand-icon">🗣️</span>
+                <span class="brand-name">SPEAKUP</span>
+            </a>
+
+            <nav class="nav-links">
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('main.dashboard') }}" class="nav-link">Dashboard</a>
+                    <div class="user-pill">
+                        <span class="user-greeting">Hi, <strong>{{ session.get('user_name') }}</strong></span>
+                        {% if session.get('user_role') == 'admin' %}
+                            <span class="badge-role">Admin</span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">Log Out</a>
+                {% else %}
+                    <a href="{{ url_for('main.index') }}" class="nav-link">Home</a>
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">Log In</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm">Get Started</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-wrapper">
+        <!-- Flash Messages Display Area -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <div class="alert-content">
+                                <span class="alert-icon">
+                                    {% if category == 'success' %}✓{% elif category == 'error' or category == 'danger' %}✕{% elif category == 'warning' %}⚠{% else %}ℹ{% endif %}
+                                </span>
+                                <span class="alert-text">{{ message }}</span>
+                            </div>
+                            <button type="button" class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Child Template Content -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="brand-icon">🗣️</span>
+                <strong>SPEAKUP</strong>
+                <span>&bull; Conversational English Practice Platform</span>
+            </div>
+            <p class="footer-copy">&copy; 2026 SPEAKUP. Built for College Mini Project.</p>
+        </div>
+    </footer>
+
+    <!-- Vanilla JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

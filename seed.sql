@@ -1,0 +1,5 @@
+-- =============================================================================
+-- SPEAKUP: Database Seed Script
+-- Initial data for levels, scenarios, and default settings will be populated
+-- in subsequent development steps.
+-- =============================================================================

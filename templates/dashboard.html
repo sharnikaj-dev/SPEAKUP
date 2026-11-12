@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="welcome-card">
+        <div class="welcome-icon">👋</div>
+        <div class="welcome-text">
+            <span class="welcome-badge">Learner Dashboard</span>
+            <h1 class="welcome-title">Welcome back, <span class="text-teal">{{ user_name }}</span>!</h1>
+            <p class="welcome-desc">
+                You are successfully logged in to SPEAKUP. Your personalized learning environment is ready.
+            </p>
+        </div>
+    </div>
+
+    <div class="dashboard-placeholder-card">
+        <div class="placeholder-icon">📌</div>
+        <div class="placeholder-body">
+            <h3>Ready for Next Steps</h3>
+            <p>
+                In the upcoming step, you will be able to set up your learner profile (native language, background, goals)
+                and choose your first conversational practice scenario.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
