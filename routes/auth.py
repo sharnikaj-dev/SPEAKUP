@@ -181,6 +181,14 @@ def login():
                 session['user_email'] = user['email']
                 session['user_role'] = user['role']
 
+                # Check if user already completed profile setup
+                cursor.execute("SELECT id FROM profiles WHERE user_id = %s", (user['id'],))
+                user_profile = cursor.fetchone()
+
+                if not user_profile:
+                    flash(f'Welcome, {user["name"]}! Please complete your profile setup to get started.', 'info')
+                    return redirect(url_for('profile.setup'))
+
                 flash(f'Welcome back, {user["name"]}!', 'success')
                 return redirect(url_for('main.dashboard'))
             else:

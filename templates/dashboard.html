@@ -3,27 +3,88 @@
 {% block title %}Dashboard - SPEAKUP{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <div class="welcome-card">
-        <div class="welcome-icon">👋</div>
-        <div class="welcome-text">
+<div class="dashboard-wrapper">
+    <!-- Learner Welcome & Profile Summary Header -->
+    <section class="dashboard-profile-header">
+        <div class="profile-info-left">
             <span class="welcome-badge">Learner Dashboard</span>
-            <h1 class="welcome-title">Welcome back, <span class="text-teal">{{ user_name }}</span>!</h1>
-            <p class="welcome-desc">
-                You are successfully logged in to SPEAKUP. Your personalized learning environment is ready.
-            </p>
+            <h1 class="dashboard-title">Welcome back, <span class="text-teal">{{ profile.name }}</span>!</h1>
+            <div class="profile-meta-tags">
+                <span class="meta-tag">
+                    <span class="meta-tag-label">Native:</span> {{ profile.native_language }}
+                </span>
+                <span class="meta-tag">
+                    <span class="meta-tag-label">Background:</span> {{ profile.background }}
+                </span>
+                <span class="meta-tag">
+                    <span class="meta-tag-label">Goal:</span> {{ profile.goal }}
+                </span>
+            </div>
         </div>
-    </div>
+        <div class="profile-actions-right">
+            <a href="{{ url_for('profile.edit') }}" class="btn btn-secondary btn-sm">✏️ Edit Profile</a>
+        </div>
+    </section>
 
-    <div class="dashboard-placeholder-card">
-        <div class="placeholder-icon">📌</div>
-        <div class="placeholder-body">
-            <h3>Ready for Next Steps</h3>
-            <p>
-                In the upcoming step, you will be able to set up your learner profile (native language, background, goals)
-                and choose your first conversational practice scenario.
-            </p>
+    <!-- Top Progress Summary Card -->
+    <section class="progress-summary-card">
+        <div class="progress-header">
+            <div class="progress-title-group">
+                <span class="progress-icon">🏆</span>
+                <div>
+                    <h3 class="progress-heading">Your Learning Progress</h3>
+                    <p class="progress-subtext">{{ completed_levels }} of {{ total_levels }} levels completed</p>
+                </div>
+            </div>
+            <span class="progress-percentage-pill">{{ completion_percentage }}%</span>
         </div>
-    </div>
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" style="width: {{ completion_percentage }}%;"></div>
+        </div>
+    </section>
+
+    <!-- 5 Levels Grid -->
+    <section class="levels-section">
+        <div class="section-header">
+            <h2>Curriculum Levels</h2>
+            <p class="section-subtext">Complete practice scenarios in your unlocked level to progress forward.</p>
+        </div>
+
+        <div class="levels-grid">
+            {% for level in levels %}
+                <div class="level-card level-card-{{ level.status }}">
+                    <div class="level-card-top">
+                        <span class="level-number-pill">Level {{ level.level_number }}</span>
+                        {% if level.status == 'completed' %}
+                            <span class="status-badge badge-completed">✓ Completed</span>
+                        {% elif level.status == 'unlocked' %}
+                            <span class="status-badge badge-unlocked">🔓 Unlocked</span>
+                        {% else %}
+                            <span class="status-badge badge-locked">🔒 Locked</span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="level-title">{{ level.title }}</h3>
+                    <p class="level-desc">{{ level.description }}</p>
+
+                    <div class="level-card-bottom">
+                        <span class="scenario-counter">
+                            📖 {{ level.scenario_count }} Scenario{% if level.scenario_count != 1 %}s{% endif %}
+                        </span>
+
+                        {% if level.status in ['unlocked', 'completed'] %}
+                            <a href="{{ url_for('main.level_detail', level_id=level.id) }}" class="btn btn-primary btn-sm">
+                                View Scenarios &rarr;
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline btn-sm btn-locked" disabled>
+                                Locked 🔒
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
 </div>
 {% endblock %}

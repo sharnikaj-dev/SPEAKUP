@@ -23,6 +23,7 @@
             <nav class="nav-links">
                 {% if session.get('user_id') %}
                     <a href="{{ url_for('main.dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ url_for('profile.edit') }}" class="nav-link">Profile</a>
                     <div class="user-pill">
                         <span class="user-greeting">Hi, <strong>{{ session.get('user_name') }}</strong></span>
                         {% if session.get('user_role') == 'admin' %}

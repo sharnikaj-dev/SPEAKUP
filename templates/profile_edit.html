@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card profile-card">
+        <div class="auth-header">
+            <span class="auth-icon">✏️</span>
+            <h2 class="auth-title">Edit Your Profile</h2>
+            <p class="auth-subtitle">Update your learning preferences below.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('profile.edit') }}" class="auth-form" novalidate>
+            <!-- Native Language Dropdown -->
+            <div class="form-group">
+                <label for="native_language" class="form-label">Native Language</label>
+                <select id="native_language" name="native_language" class="form-control" required>
+                    {% for lang in languages %}
+                        <option value="{{ lang }}" {% if profile.native_language == lang %}selected{% endif %}>{{ lang }}</option>
+                    {% endfor %}
+                </select>
+                <span class="form-hint">Used for language-specific explanations.</span>
+            </div>
+
+            <!-- Background Dropdown -->
+            <div class="form-group">
+                <label for="background" class="form-label">Background</label>
+                <select id="background" name="background" class="form-control" required>
+                    {% for bg in backgrounds %}
+                        <option value="{{ bg }}" {% if profile.background == bg %}selected{% endif %}>{{ bg }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Goal Dropdown -->
+            <div class="form-group">
+                <label for="goal" class="form-label">Learning Goal</label>
+                <select id="goal" name="goal" class="form-control" required>
+                    {% for g in goals %}
+                        <option value="{{ g }}" {% if profile.goal == g %}selected{% endif %}>{{ g }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Current Level (Read-Only) -->
+            <div class="form-group">
+                <label class="form-label">Current Level (Read-Only)</label>
+                <div class="readonly-level-box">
+                    <span class="readonly-badge">Level {{ profile.level_number|default(1) }}</span>
+                    <span class="readonly-title">{{ profile.level_title|default('Self-Introduction') }}</span>
+                </div>
+                <span class="form-hint">Level cannot be edited manually. Levels unlock progressively as you practice.</span>
+            </div>
+
+            <div class="form-actions-row">
+                <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary btn-block">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

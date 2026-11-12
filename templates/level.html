@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Level {{ level.level_number }}: {{ level.title }} - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="level-page-container">
+    <!-- Breadcrumb & Back Navigation -->
+    <div class="breadcrumb-bar">
+        <a href="{{ url_for('main.dashboard') }}" class="back-link">&larr; Back to Dashboard</a>
+    </div>
+
+    <!-- Level Banner -->
+    <section class="level-banner">
+        <div class="level-banner-header">
+            <div class="level-badge-group">
+                <span class="level-number-pill">Level {{ level.level_number }}</span>
+                {% if level_status == 'completed' %}
+                    <span class="status-badge badge-completed">✓ Completed</span>
+                {% else %}
+                    <span class="status-badge badge-unlocked">🔓 Unlocked</span>
+                {% endif %}
+            </div>
+            <h1 class="level-page-title">{{ level.title }}</h1>
+            <p class="level-page-desc">{{ level.description }}</p>
+        </div>
+    </section>
+
+    <!-- Scenarios Section -->
+    <section class="scenarios-section">
+        <div class="section-header">
+            <h2>Practice Scenarios ({{ scenarios|length }})</h2>
+            <p class="section-subtext">Choose a real-world scenario to practice your conversational English.</p>
+        </div>
+
+        <div class="scenarios-grid">
+            {% for scenario in scenarios %}
+                <div class="scenario-card">
+                    <div class="scenario-card-header">
+                        <span class="scenario-index-pill">Scenario {{ loop.index }}</span>
+                        <h3 class="scenario-title">{{ scenario.title }}</h3>
+                    </div>
+
+                    <p class="scenario-desc">{{ scenario.description }}</p>
+
+                    <!-- AI Persona Role Box -->
+                    <div class="scenario-ai-role-box">
+                        <div class="ai-role-header">
+                            <span class="ai-icon">🤖</span>
+                            <span class="ai-role-label">AI Partner Persona</span>
+                        </div>
+                        <p class="ai-role-prompt">{{ scenario.ai_role_prompt }}</p>
+                    </div>
+
+                    <!-- AI Opening Message Preview -->
+                    <div class="scenario-opening-box">
+                        <span class="opening-label">AI Partner Opening Line:</span>
+                        <blockquote class="opening-quote">
+                            &ldquo;{{ scenario.opening_message }}&rdquo;
+                        </blockquote>
+                    </div>
+
+                    <!-- Action Area -->
+                    <div class="scenario-actions">
+                        <button class="btn btn-primary btn-block btn-disabled" disabled title="Chat functionality will be unlocked in Step 3">
+                            Start Conversation (Coming in Step 3)
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

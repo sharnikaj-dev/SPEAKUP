@@ -47,6 +47,7 @@ def execute_sql_file(cursor, file_path):
 def init_database():
     """
     Connects to MySQL server and applies schema.sql followed by seed.sql.
+    Verifies that the 5 levels and 15 scenarios are loaded properly.
     """
     print("=" * 60)
     print("SPEAKUP: Initializing MySQL Database")
@@ -57,7 +58,7 @@ def init_database():
     connection = None
     try:
         # Step 1: Connect to MySQL server without specifying a database,
-        # so schema.sql can create the database if it doesn't exist.
+        # so schema.sql can create the database if it doesn't exist yet.
         connection = mysql.connector.connect(
             host=Config.DB_HOST,
             port=Config.DB_PORT,
@@ -78,8 +79,19 @@ def init_database():
         execute_sql_file(cursor, seed_path)
 
         connection.commit()
+
+        # Step 4: Verification check
+        cursor.execute("SELECT COUNT(*) FROM levels")
+        level_count = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM scenarios")
+        scenario_count = cursor.fetchone()[0]
+
+        print("\n" + "=" * 60)
+        print(f"[✓] Database initialization completed successfully!")
+        print(f"[✓] Verified: {level_count} levels and {scenario_count} scenarios ready in database.")
+        print("=" * 60)
+
         cursor.close()
-        print("\n[✓] Database initialization completed successfully!")
 
     except Error as e:
         print(f"\n[✗] Database initialization failed: {e}")

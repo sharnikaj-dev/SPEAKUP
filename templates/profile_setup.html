@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Set Up Your Profile - SPEAKUP{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card profile-card">
+        <div class="auth-header">
+            <span class="auth-icon">🎯</span>
+            <h2 class="auth-title">Complete Your Profile</h2>
+            <p class="auth-subtitle">Tailor your conversational practice by selecting your preferences.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('profile.setup') }}" class="auth-form" novalidate>
+            <!-- Native Language Dropdown -->
+            <div class="form-group">
+                <label for="native_language" class="form-label">Native Language</label>
+                <select id="native_language" name="native_language" class="form-control" required>
+                    <option value="" disabled {% if not selected_language %}selected{% endif %}>Select your native language</option>
+                    {% for lang in languages %}
+                        <option value="{{ lang }}" {% if selected_language == lang %}selected{% endif %}>{{ lang }}</option>
+                    {% endfor %}
+                </select>
+                <span class="form-hint">Used to provide native-language explanations for your mistakes.</span>
+            </div>
+
+            <!-- Background Dropdown -->
+            <div class="form-group">
+                <label for="background" class="form-label">Current Background</label>
+                <select id="background" name="background" class="form-control" required>
+                    <option value="" disabled {% if not selected_background %}selected{% endif %}>Select your background</option>
+                    {% for bg in backgrounds %}
+                        <option value="{{ bg }}" {% if selected_background == bg %}selected{% endif %}>{{ bg }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Goal Dropdown -->
+            <div class="form-group">
+                <label for="goal" class="form-label">Primary English Goal</label>
+                <select id="goal" name="goal" class="form-control" required>
+                    <option value="" disabled {% if not selected_goal %}selected{% endif %}>Select your primary goal</option>
+                    {% for g in goals %}
+                        <option value="{{ g }}" {% if selected_goal == g %}selected{% endif %}>{{ g }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Initial Level (Read-Only) -->
+            <div class="form-group">
+                <label class="form-label">Starting Level (Fixed)</label>
+                <div class="readonly-level-box">
+                    <span class="readonly-badge">Level 1</span>
+                    <span class="readonly-title">Self-Introduction</span>
+                </div>
+                <span class="form-hint">All learners start at Level 1 to establish conversational basics. Higher levels unlock as you complete scenarios.</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Save Profile & Unlock Level 1 &rarr;</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
